@@ -3,6 +3,7 @@
 #include <time.h>
 #include <pthread.h>
 
+#define ERR(source) (perror(source), fprintf(stderr, "%s:%d\n", __FILE__, __LINE__), exit(EXIT_FAILURE))
 
 struct thread_data {
     int thread_id;
@@ -44,12 +45,15 @@ int main(int argc, char *argv[]) {
     
     struct thread_data *threads[k]; 
 
+    
     for(int i = 0; i < k; i++) {
         threads[i] = malloc(sizeof(struct thread_data));
+        if(threads[i] == NULL)ERR("malloc");
         threads[i]->num_tries = n;
         threads[i]->local_hits = 0;
         threads[i]->thread_id = i;  // this  is  name  i am giving  to this  thread 
-        pthread_create(&ids[i], NULL, monte_carlo_worker , (void *)threads[i]);
+        if(pthread_create(&ids[i], NULL, monte_carlo_worker , (void *)threads[i]) != 0 )
+            ERR("Couldn't create  thread ");
 
     }
 
@@ -61,7 +65,7 @@ int main(int argc, char *argv[]) {
         sum += threads[i]->local_hits;
         free(threads[i]);
     }
-    double pi_aprox = 4.0 * (double)sum / (k*n);
+    double pi_aprox = (4.0 * sum) / ((long long)k * n);
 
     printf("The pi aprox is : %lf\n", pi_aprox);
 

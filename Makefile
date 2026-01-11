@@ -2,7 +2,7 @@ CC=gcc
 C_FLAGS=-Wall -g -Wno-unused
 L_FLAGS=-fsanitize=address,undefined,leak
 
-TARGET=task_1
+TARGET=task_2
 FILES=${TARGET}.o
 
 .PHONY: clean all
